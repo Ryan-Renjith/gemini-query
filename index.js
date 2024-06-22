@@ -5,7 +5,7 @@ const path = require('path');
 const readline = require('readline-sync');
 const dotenv = require('dotenv');
 
-dotenv.config(); // Load variables from .env into process.env
+dotenv.config();
 const apiKeyPath = path.resolve(__dirname, 'api_key.txt');
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -16,7 +16,7 @@ async function getApiKey() {
         if (!fs.existsSync(apiKeyPath)) {
             console.log('GEMINI_API_KEY not found');
             const newApiKey = readline.question('Enter your GEMINI_API_KEY: ');
-            // Update .txt file
+            // Create .txt file
             fs.writeFileSync(apiKeyPath, newApiKey);
             console.log('gmniprompt updated with GEMINI_API_KEY.');
             return newApiKey;
