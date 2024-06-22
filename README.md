@@ -1,1 +1,1 @@
-# gprompt
+# gmniprompt
