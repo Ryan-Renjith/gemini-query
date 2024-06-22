@@ -6,25 +6,33 @@ const readline = require('readline-sync');
 const dotenv = require('dotenv');
 
 dotenv.config(); // Load variables from .env into process.env
-const envPath = path.join(__dirname, '.env');
+const apiKeyPath = path.resolve(__dirname, 'api_key.txt');
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { argv } = require('process');
 
 async function getApiKey() {
     try {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
+        if (!fs.existsSync(apiKeyPath)) {
             console.log('GEMINI_API_KEY not found');
             const newApiKey = readline.question('Enter your GEMINI_API_KEY: ');
-            // Update .env file
-            fs.writeFileSync(envPath, `GEMINI_API_KEY=${newApiKey}\n`);
-            console.log('gprompt updated with GEMINI_API_KEY.');
+            // Update .txt file
+            fs.writeFileSync(apiKeyPath, newApiKey);
+            console.log('gmniprompt updated with GEMINI_API_KEY.');
             return newApiKey;
         }
-        return apiKey;
+        else {
+            try {
+                const data = fs.readFileSync(apiKeyPath, 'utf8');
+                const lines = data.split('\n');
+                return lines[0].trim();
+            } catch (err) {
+                console.error('Error reading file:', err.message);
+                return null;
+            }
+        }
     } catch (err) {
-        console.error('Error reading .env file:', err);
+        console.error('Error reading .txt file:', err);
         return null;
     }
 }
@@ -35,6 +43,19 @@ async function run(prompt, model) {
     const text = response.text();
     console.log(text);
   }
+
+  const deleteFile = (filePath) => {
+    try {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            console.log('Api key deleted succesfully');
+        } else {
+            console.log('Api file does not exist');
+        }
+    } catch (err) {
+        console.error('Error deleting api key:', err.message);
+    }
+};
 
 async function main() {
     const apiKey = await getApiKey();
@@ -53,10 +74,8 @@ async function main() {
     if (args.length === 0) {
         console.log('Please provide the prompt');
     } else {
-        if(args[0] === 'deleteKey') {
-            delete process.env.GEMINI_API_KEY;
-            fs.writeFileSync(envPath, `GEMINI_API_KEY=`);
-            console.log('API key deleted');
+        if(args[0] === '-dk') {
+            deleteFile(apiKeyPath);
             return;
         }
 
