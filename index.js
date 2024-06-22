@@ -17,7 +17,7 @@ async function getApiKey() {
             const newApiKey = readline.question('Enter your GEMINI_API_KEY: ');
             // Create .txt file
             fs.writeFileSync(apiKeyPath, newApiKey);
-            console.log('gmniprompt updated with GEMINI_API_KEY.');
+            console.log('gmiq updated with GEMINI_API_KEY.');
             return newApiKey;
         }
         else {
