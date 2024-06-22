@@ -1,1 +1,1 @@
-# gmniprompt
+# gemini-query
